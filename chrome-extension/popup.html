@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Instagram Downloader Helper</title>
+  <style>
+    :root { color-scheme: dark; font: 13px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:#131219; color:#f4f2f7; }
+    body { width:300px; margin:0; padding:16px; }
+    h1 { margin:0; font-size:15px; }
+    p { color:#aaa6b2; font-size:11px; margin:9px 0 13px; }
+    button { width:100%; border:0; border-radius:9px; padding:11px 12px; color:white; font:inherit; font-weight:700; background:linear-gradient(100deg,#e84379,#bb3ea1); cursor:pointer; }
+    button:disabled { opacity:.55; cursor:wait; }
+    #status { min-height:36px; margin-top:11px; color:#e1dce6; font-size:11px; }
+    .small { border-top:1px solid #302d38; padding-top:10px; color:#8f8b98; font-size:10px; }
+  </style>
+</head>
+<body>
+  <h1>Instagram Downloader</h1>
+  <p>With a profile open in this tab, scan up to 300 visible Reels and send their links to your local downloader. Stories are skipped.</p>
+  <button id="scan" type="button">Scan and send Reels</button>
+  <div id="status" role="status">Ready. Open an Instagram profile in this tab.</div>
+  <div class="small">This helper uses temporary access to the tab you select. It does not read passwords or cookies.</div>
+  <script src="popup.js"></script>
+</body>
+</html>

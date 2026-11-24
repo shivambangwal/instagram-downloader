@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101015">
+  <title>Instagram Downloader</title>
+  <style>
+    :root { color-scheme: dark; --bg:#0d0d12; --panel:#15151d; --panel2:#101017; --line:#292934; --text:#f4f2f7; --muted:#a6a2b0; --pink:#e83f79; --orange:#ff874c; --green:#4be19b; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; color:var(--text); background:radial-gradient(700px 400px at 82% -10%,#5f23452a,transparent 70%),var(--bg); font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    button,input { font:inherit; }
+    button { cursor:pointer; }
+    .shell { width:min(980px,calc(100% - 36px)); margin:0 auto; padding:30px 0 64px; }
+    header { display:flex; justify-content:space-between; align-items:center; margin-bottom:52px; }
+    .brand { display:flex; align-items:center; gap:11px; font-size:15px; font-weight:700; letter-spacing:-.02em; }
+    .glyph { display:grid; place-items:center; width:37px; height:37px; border-radius:12px; background:linear-gradient(140deg,#ffac55,#f24b70 55%,#9847b6); box-shadow:0 6px 24px #ed4b7540; }
+    .glyph svg { width:21px; height:21px; }
+    .badge { display:flex; align-items:center; gap:8px; border:1px solid var(--line); border-radius:99px; padding:6px 11px; color:var(--muted); font-size:12px; }
+    .dot { width:7px; height:7px; border-radius:99px; background:#777482; }
+    .badge.connected { color:#a9f5d0; border-color:#28583f; background:#132119; }
+    .badge.connected .dot { background:var(--green); box-shadow:0 0 10px #4be19b99; }
+    .intro { max-width:650px; margin:0 0 26px; }
+    .launch-notice { margin:-30px 0 26px; padding:12px 14px; border:1px solid #74512c; border-radius:11px; background:#292015; color:#ffe3b6; font-size:12px; }
+    .launch-notice strong { display:block; margin-bottom:3px; color:#ffcf8c; }
+    .launch-notice a { color:#ffd38f; }
+    .launch-notice code { color:#fff1d5; }
+    .eyebrow { color:#ff9cae; font-size:11px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; margin-bottom:9px; }
+    h1 { margin:0; font-size:clamp(30px,5vw,44px); line-height:1.1; letter-spacing:-.045em; }
+    .intro p { color:var(--muted); margin:12px 0 0; max-width:610px; }
+    .layout { display:grid; grid-template-columns:minmax(0,1fr) 290px; gap:16px; align-items:start; }
+    .card { background:linear-gradient(145deg,#181821,#13131a); border:1px solid var(--line); border-radius:16px; padding:22px; box-shadow:0 22px 70px #0003; }
+    .heading { display:flex; justify-content:space-between; align-items:center; gap:15px; margin-bottom:20px; }
+    h2 { font-size:17px; margin:0; letter-spacing:-.02em; }
+    .step { color:#85818f; font-size:10px; letter-spacing:.12em; }
+    label { display:block; font-size:12px; font-weight:650; margin:0 0 8px; color:#e2dfe8; }
+    .input-wrap { position:relative; }
+    .input-wrap svg { position:absolute; width:18px; height:18px; left:13px; top:13px; color:#aaa5b1; pointer-events:none; }
+    input { width:100%; border:1px solid #353440; background:#0d0d13; border-radius:10px; padding:12px 13px 12px 41px; color:var(--text); outline:none; }
+    input:focus { border-color:#e75a84; box-shadow:0 0 0 3px #e75a8420; }
+    input::placeholder { color:#777482; }
+    .helper { color:#96929f; font-size:11px; margin:9px 1px 19px; }
+    .quality-row { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:15px; }
+    .quality { display:inline-flex; align-items:center; gap:6px; padding:5px 9px; border-radius:99px; border:1px solid #593044; color:#ffd6e1; background:#321927; font-size:10px; white-space:nowrap; }
+    .quality svg { width:13px; height:13px; }
+    .download { display:flex; align-items:center; justify-content:center; gap:9px; width:100%; border:0; border-radius:10px; padding:12px 16px; color:white; font-weight:700; background:linear-gradient(100deg,#e84379,#bb3ea1); box-shadow:0 8px 25px #cc3f7933; transition:filter .15s,transform .15s; }
+    .download:hover:not(:disabled) { filter:brightness(1.12); transform:translateY(-1px); }
+    .download:disabled { opacity:.52; cursor:wait; }
+    .download svg { width:18px; height:18px; }
+    .actions { display:grid; grid-template-columns:1fr auto; gap:9px; }
+    .secondary { border:1px solid #393743; border-radius:10px; background:#201f28; color:#e2dee8; padding:10px 13px; font-size:12px; font-weight:650; }
+    .secondary:hover:not(:disabled) { border-color:#b9507a; }
+    .secondary:disabled { opacity:.5; cursor:wait; }
+    .side h3 { margin:0 0 13px; font-size:13px; }
+    .feature { display:flex; align-items:flex-start; gap:10px; color:#ccc8d3; font-size:12px; margin:12px 0; }
+    .feature svg { flex:0 0 16px; width:16px; height:16px; margin-top:1px; color:#ef7192; }
+    .note { border-top:1px solid var(--line); padding-top:13px; margin-top:17px; color:#9793a0; font-size:10px; }
+    .helper-details { margin-top:14px; border-top:1px solid var(--line); padding-top:12px; color:#c8c4d0; font-size:11px; }
+    .helper-details summary { color:#ffb0c3; font-weight:650; }
+    .helper-details p { margin:8px 0; color:#aaa6b2; }
+    .helper-details ol { margin:7px 0 0; padding-left:18px; color:#aaa6b2; }
+    .helper-details li { margin:5px 0; }
+    .helper-details code { color:#f3d9e2; }
+    .job { display:none; margin-top:16px; }
+    .job.visible { display:block; }
+    .job-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
+    .job-title { font-size:13px; font-weight:700; }
+    .job-status { color:#b7b2c0; font-size:11px; text-transform:capitalize; }
+    .track { overflow:hidden; height:8px; border-radius:99px; background:#2a2932; }
+    .fill { width:0; height:100%; border-radius:inherit; background:linear-gradient(90deg,#f2768f,#a853c9); transition:width .35s; }
+    .job-meta { display:flex; justify-content:space-between; gap:12px; margin-top:8px; color:#a7a3af; font-size:11px; }
+    .job-current { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .job-message { margin-top:9px; color:#d1cdd7; font-size:12px; }
+    .stop { margin-top:13px; border:1px solid #50313e; background:#24151c; color:#ffc5d0; border-radius:8px; padding:7px 11px; font-size:11px; }
+    .stop:disabled { opacity:.55; }
+    details { margin-top:12px; color:#9e9aa7; font-size:10px; }
+    summary { cursor:pointer; }
+    pre { white-space:pre-wrap; word-break:break-word; max-height:130px; overflow:auto; color:#8b8794; font:10px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .files { margin-top:14px; }
+    .files[hidden] { display:none; }
+    .selection { display:none; margin-top:16px; }
+    .selection.visible { display:block; }
+    .selection-toolbar { display:flex; justify-content:space-between; align-items:center; gap:10px; margin:13px 0 9px; }
+    .selection-count { color:#aaa6b2; font-size:11px; }
+    .text-button { border:0; background:none; color:#ffa4bb; padding:4px 6px; font-size:11px; }
+    .video-list { max-height:310px; overflow:auto; display:grid; gap:7px; }
+    .video-option { display:flex; align-items:center; gap:10px; padding:8px; background:#101017; border:1px solid #302e39; border-radius:9px; cursor:pointer; }
+    .video-option:hover { border-color:#805064; }
+    .video-option input { width:15px; height:15px; flex:none; accent-color:#e84379; }
+    .video-option img { width:58px; height:48px; flex:none; border-radius:6px; object-fit:cover; background:#282631; }
+    .video-placeholder { display:grid; place-items:center; width:58px; height:48px; flex:none; border-radius:6px; color:#ffc2d2; background:linear-gradient(135deg,#3a1d31,#26202f); font-size:13px; font-weight:700; }
+    .video-option .video-title { overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; color:#eeeaf3; font-size:11px; line-height:1.35; }
+    .video-list-empty { color:#a6a2b0; font-size:12px; padding:10px 2px; }
+    .selection .download { margin-top:12px; }
+    .manual-link-entry { border:1px solid #55404a; border-radius:10px; background:#1b151d; padding:12px; margin-bottom:12px; }
+    .manual-link-entry p { margin:0 0 9px; color:#ccc4d0; font-size:11px; }
+    .manual-link-textarea { display:block; width:100%; min-height:94px; resize:vertical; border:1px solid #393641; border-radius:8px; background:#0e0e14; color:var(--text); padding:9px 10px; outline:none; font:11px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .manual-link-textarea:focus { border-color:#e75a84; box-shadow:0 0 0 3px #e75a8420; }
+    .manual-link-entry .secondary { width:100%; margin-top:8px; }
+    .file { display:flex; justify-content:space-between; align-items:center; gap:12px; text-decoration:none; color:#eeeaf3; background:#101017; border:1px solid #302e39; border-radius:9px; padding:10px 12px; margin-top:7px; }
+    .file:hover { border-color:#bc507a; }
+    .file strong { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:11px; }
+    .file span { flex:none; color:#9e9aa7; font-size:10px; }
+    .toast { position:fixed; bottom:20px; left:50%; transform:translate(-50%,12px); opacity:0; pointer-events:none; background:#292631; border:1px solid #45414e; border-radius:10px; color:#fff; padding:10px 14px; font-size:12px; box-shadow:0 8px 30px #0008; transition:.2s; }
+    .toast.show { opacity:1; transform:translate(-50%,0); }
+    @media(max-width:760px) { header { margin-bottom:38px; } .layout { grid-template-columns:1fr; } .side { order:2; } }
+    @media(max-width:480px) { .shell { width:calc(100% - 24px); padding-top:20px; } .card { padding:17px; } .badge { font-size:0; padding:8px; } .badge .dot { width:8px; height:8px; } .quality-row { align-items:flex-start; flex-direction:column; gap:6px; } }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div class="brand"><span class="glyph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><rect x="3.5" y="3.5" width="17" height="17" rx="5" stroke="white" stroke-width="1.7"/><circle cx="12" cy="12" r="4" stroke="white" stroke-width="1.7"/><circle cx="17.6" cy="6.7" r="1.1" fill="white"/></svg></span><span>Instagram Downloader</span></div>
+      <div class="badge" id="connection-badge" title="Checking app connection"><i class="dot"></i><span>Private downloader</span></div>
+    </header>
+
+    <div class="launch-notice" id="file-notice" role="alert" hidden>
+      <strong>Start the local downloader to download videos.</strong>
+      This page was opened as a file, so progress and Stop can’t connect. Double-click <code>Start Instagram Downloader.command</code>; it opens the working local app at <a href="http://127.0.0.1:8766/">127.0.0.1:8766</a>.
+    </div>
+
+    <section class="intro">
+      <div class="eyebrow">Save at the best available quality</div>
+      <h1>Instagram media, at its best.</h1>
+      <p>Paste a post or Reel link to save its available media in the highest quality Instagram provides.</p>
+    </section>
+
+    <section class="layout">
+      <div>
+        <section class="card">
+          <div class="heading"><h2>Download Instagram videos</h2><span class="step">PROFILE OR LINK</span></div>
+          <form id="download-form">
+            <label for="instagram-url">Instagram profile, post, Reel, or carousel link</label>
+            <div class="input-wrap">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10.5 13.5a4.25 4.25 0 0 0 6.01 0l2-2a4.25 4.25 0 0 0-6.01-6.01l-1.15 1.15M13.5 10.5a4.25 4.25 0 0 0-6.01 0l-2 2a4.25 4.25 0 0 0 6.01 6.01l1.15-1.15" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+              <input id="instagram-url" type="url" inputmode="url" placeholder="https://www.instagram.com/username/ or a Reel link" autocomplete="url" required>
+            </div>
+            <p class="helper">For a profile, Videos means Reels and video posts only; Stories are not included. Download all videos or choose specific ones. Saved filenames use the caption, including hashtags and emoji when present.</p>
+            <div class="quality-row"><label style="margin:0">Videos and audio</label><span class="quality"><svg viewBox="0 0 16 16" fill="none"><path d="m8 1.5 1.5 4.3L13.5 7l-4 1.2L8 12.5 6.5 8.2 2.5 7l4-1.2L8 1.5Z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg> Highest available quality</span></div>
+            <div class="actions">
+              <button class="download" id="download-button" type="submit"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3.5v11m0 0 4-4m-4 4-4-4M4.5 16v3.5h15V16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="download-label">Download videos</span></button>
+              <button class="secondary" id="choose-button" type="button">Choose videos…</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="card selection" id="selection-card">
+          <div class="heading"><h2>Select videos</h2><span class="step" id="selection-step">PROFILE REELS</span></div>
+          <div class="selection-toolbar"><span class="selection-count" id="selection-count">Loading videos…</span><span><button class="text-button" id="select-all" type="button">Select all</button><button class="text-button" id="select-none" type="button">Clear</button></span></div>
+          <div class="manual-link-entry" id="manual-link-entry" hidden>
+            <p>Automatic profile listing is unavailable right now. Paste direct Reel or video-post links below, one per line, then choose which to download. Stories links aren’t accepted.</p>
+            <textarea class="manual-link-textarea" id="manual-links" placeholder="https://www.instagram.com/reel/…&#10;https://www.instagram.com/p/…" aria-label="Paste Instagram Reel links, one per line"></textarea>
+            <button class="secondary" id="load-manual-links" type="button">Load pasted links</button>
+          </div>
+          <div class="video-list" id="video-list" aria-label="Available videos"></div>
+          <button class="download" id="download-selected" type="button" disabled>Download selected videos</button>
+        </section>
+
+        <section class="card job" id="job-card" aria-live="polite">
+          <div class="job-head"><span class="job-title">Your download</span><span class="job-status" id="job-status">connecting</span></div>
+          <div class="track" role="progressbar" id="progress-track" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="fill" id="progress-fill"></div></div>
+          <div class="job-meta"><span class="job-current" id="job-current">Connecting…</span><span id="job-percent">0%</span></div>
+          <div class="job-message" id="job-message"></div>
+          <button class="stop" id="stop-button" type="button" hidden>Stop download</button>
+          <div class="files" id="job-files" hidden></div>
+          <details><summary>Download details</summary><pre id="job-log"></pre></details>
+        </section>
+      </div>
+
+      <aside class="card side">
+        <h3>What it supports</h3>
+        <div class="feature"><svg viewBox="0 0 20 20" fill="none"><path d="m4 10 4 4 8-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Reels and single video posts</span></div>
+        <div class="feature"><svg viewBox="0 0 20 20" fill="none"><path d="m4 10 4 4 8-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Profile videos/Reels, without Stories</span></div>
+        <div class="feature"><svg viewBox="0 0 20 20" fill="none"><path d="m4 10 4 4 8-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Pick specific videos or carousel items</span></div>
+        <div class="feature"><svg viewBox="0 0 20 20" fill="none"><path d="m4 10 4 4 8-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Best available video, with audio</span></div>
+        <div class="feature"><svg viewBox="0 0 20 20" fill="none"><path d="m4 10 4 4 8-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Files saved to Downloads/Instagram</span></div>
+        <details class="helper-details">
+          <summary>Scan Reels from a signed-in Chrome tab</summary>
+          <p>The optional helper reads Reel links visible on the profile page you choose. It does not read your password or browser cookies. Stories are skipped.</p>
+          <ol>
+            <li>In Chrome, open <code>chrome://extensions</code> and turn on Developer mode.</li>
+            <li>Choose <strong>Load unpacked</strong> and select the app’s <code>chrome-extension</code> folder.</li>
+            <li>Open the profile in Chrome, click the helper icon, then choose <strong>Scan and send Reels</strong>.</li>
+          </ol>
+          <p>The imported Reel list will appear here for selection. Downloads still depend on Instagram making each video available to yt-dlp.</p>
+        </details>
+        <div class="note">Use this for your own content or media you have permission to save. The local downloader never asks for or stores Instagram credentials. Profile listing is unavailable in yt-dlp, so the optional Chrome helper collects Reel links visible in a profile tab; Stories are skipped. Long captions are shortened to fit file-name limits.</div>
+      </aside>
+    </section>
+  </main>
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+    const form = document.querySelector('#download-form');
+    const urlInput = document.querySelector('#instagram-url');
+    const downloadButton = document.querySelector('#download-button');
+    const chooseButton = document.querySelector('#choose-button');
+    const selectionCard = document.querySelector('#selection-card');
+    const videoList = document.querySelector('#video-list');
+    const manualLinkEntry = document.querySelector('#manual-link-entry');
+    const manualLinks = document.querySelector('#manual-links');
+    const loadManualLinksButton = document.querySelector('#load-manual-links');
+    const downloadSelected = document.querySelector('#download-selected');
+    const stopButton = document.querySelector('#stop-button');
+    let currentJob = sessionStorage.getItem('instagram-downloader-job');
+    let pollTimer = null;
+    let currentPreview = null;
+    let currentPreviewIsProfile = false;
+
+    function toast(message) {
+      const el = document.querySelector('#toast');
+      el.textContent = message; el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 3500);
+    }
+    function sizeText(bytes) {
+      if (bytes < 1024) return `${bytes} B`;
+      const units = ['KB','MB','GB','TB']; let n = bytes / 1024, i = 0;
+      while (n >= 1024 && i < units.length - 1) { n /= 1024; i++; }
+      return `${n.toFixed(n >= 100 ? 0 : 1)} ${units[i]}`;
+    }
+    async function api(path, body) {
+      const response = await fetch(path, body ? { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) } : {});
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Something went wrong.');
+      return data;
+    }
+    function renderFiles(files) {
+      const box = document.querySelector('#job-files'); box.replaceChildren();
+      for (const file of files || []) {
+        const link = document.createElement('a'); link.className = 'file'; link.href = file.url; link.download = file.name;
+        const name = document.createElement('strong'); name.textContent = file.name;
+        const size = document.createElement('span'); size.textContent = sizeText(file.size);
+        link.append(name, size); box.append(link);
+      }
+      box.hidden = !files || files.length === 0;
+    }
+    function showJob() {
+      document.querySelector('#job-card').classList.add('visible');
+      document.querySelector('#job-card').scrollIntoView({behavior:'smooth',block:'nearest'});
+    }
+    function isProfileLink(value) {
+      try {
+        const url = new URL(value);
+        const host = url.hostname.toLowerCase().replace(/^www\./,'');
+        const parts = url.pathname.split('/').filter(Boolean);
+        return ['instagram.com','instagr.am'].includes(host) && parts.length > 0 && !['p','reel','reels','tv','stories','share','accounts','explore'].includes(parts[0].toLowerCase());
+      } catch (_) { return false; }
+    }
+    function updateDownloadLabel() {
+      document.querySelector('#download-label').textContent = isProfileLink(urlInput.value) ? 'Download all videos' : 'Download this post/Reel';
+    }
+    urlInput.addEventListener('input', () => {
+      updateDownloadLabel(); selectionCard.classList.remove('visible'); manualLinkEntry.hidden = true; currentPreview = null; videoList.replaceChildren();
+    });
+    function selectedVideoKeys() {
+      return [...videoList.querySelectorAll('input[type="checkbox"]:checked')].map(input => input.value);
+    }
+    function updateSelectionCount() {
+      const count = selectedVideoKeys().length;
+      document.querySelector('#selection-count').textContent = currentPreviewIsProfile ? `${count} selected · up to 300 newest videos` : `${count} selected`;
+      downloadSelected.disabled = count === 0;
+    }
+    function renderVideoChoices(videos, previewId, isProfile, isManual = false, sourceLabel = '') {
+      currentPreview = {id:previewId, videos};
+      currentPreviewIsProfile = isProfile;
+      manualLinkEntry.hidden = true;
+      videoList.replaceChildren();
+      document.querySelector('#selection-step').textContent = sourceLabel || (isProfile ? 'PROFILE VIDEOS' : isManual ? 'PASTED LINKS' : 'POST MEDIA');
+      for (const video of videos) {
+        const label = document.createElement('label'); label.className = 'video-option';
+        const checkbox = document.createElement('input'); checkbox.type = 'checkbox'; checkbox.value = video.key; checkbox.checked = true;
+        checkbox.addEventListener('change', updateSelectionCount);
+        const title = document.createElement('span'); title.className = 'video-title'; title.textContent = video.title || 'Instagram video';
+        if (video.thumbnail) {
+          const img = document.createElement('img'); img.src = video.thumbnail; img.alt = ''; img.loading = 'lazy';
+          label.append(checkbox, img, title);
+        } else {
+          const placeholder = document.createElement('span'); placeholder.className = 'video-placeholder'; placeholder.textContent = String(Number(video.key) + 1);
+          label.append(checkbox, placeholder, title);
+        }
+        videoList.append(label);
+      }
+      selectionCard.classList.add('visible'); updateSelectionCount();
+      selectionCard.scrollIntoView({behavior:'smooth',block:'nearest'});
+    }
+    async function loadVideoChoices() {
+      const rawUrl = urlInput.value.trim();
+      if (!rawUrl) { toast('Paste an Instagram profile, post, or Reel link first.'); return; }
+      chooseButton.disabled = true; chooseButton.textContent = 'Loading…';
+      selectionCard.classList.add('visible'); videoList.innerHTML = '<div class="video-list-empty">Loading the available videos…</div>';
+      try {
+        const result = await api('/api/preview',{url:rawUrl});
+        renderVideoChoices(result.videos,result.preview_id,isProfileLink(rawUrl));
+      } catch (error) {
+        selectionCard.classList.add('visible');
+        const profile = isProfileLink(rawUrl);
+        document.querySelector('#selection-count').textContent = profile ? 'Profile scan failed · use direct Reel links below' : 'Could not preview · paste direct Reel links below';
+        manualLinkEntry.querySelector('p').textContent = profile
+          ? 'Automatic listing is unavailable in yt-dlp. Use the signed-in Chrome helper in the What it supports card to scan visible Reels, or paste direct Reel/video-post links below. Stories are skipped.'
+          : 'The link could not be previewed. Paste direct Reel or video-post links below, one per line, then choose which to download.';
+        videoList.replaceChildren(); downloadSelected.disabled = true;
+        manualLinkEntry.hidden = false;
+        toast(error.message);
+      } finally { chooseButton.disabled = false; chooseButton.textContent = 'Choose videos…'; }
+    }
+    async function loadManualLinks() {
+      const urls = manualLinks.value.split(/\r?\n/).map(value => value.trim()).filter(Boolean);
+      if (!urls.length) { toast('Paste one or more Reel/post links, one per line.'); return; }
+      loadManualLinksButton.disabled = true; loadManualLinksButton.textContent = 'Loading links…';
+      try {
+        const result = await api('/api/preview',{urls});
+        renderVideoChoices(result.videos,result.preview_id,false,true);
+      } catch (error) { toast(error.message); }
+      finally { loadManualLinksButton.disabled = false; loadManualLinksButton.textContent = 'Load pasted links'; }
+    }
+    loadManualLinksButton.addEventListener('click',loadManualLinks);
+    let checkingChromeImport = false;
+    async function checkChromeImport() {
+      if (checkingChromeImport) return;
+      checkingChromeImport = true;
+      try {
+        const result = await api('/api/extension/latest');
+        if (!result.import) return;
+        const imported = result.import;
+        urlInput.value = imported.profile_url;
+        updateDownloadLabel();
+        const preview = await api('/api/preview',{urls:imported.urls});
+        renderVideoChoices(preview.videos,preview.preview_id,true,false,'CHROME PROFILE');
+        const name = imported.username ? `@${imported.username}` : 'profile';
+        toast(`Loaded ${preview.videos.length} Reels from ${name}. Select the ones to download.`);
+      } catch (error) {
+        toast(`Chrome helper import failed: ${error.message}`);
+      } finally { checkingChromeImport = false; }
+    }
+    async function startDownload(payload, title) {
+      downloadButton.disabled = true; chooseButton.disabled = true; stopButton.hidden = false; stopButton.disabled = false;
+      downloadSelected.disabled = true;
+      document.querySelector('#job-title').textContent = title;
+      document.querySelector('#job-message').textContent = 'Preparing the best available media…';
+      document.querySelector('#progress-fill').style.width = '0%'; document.querySelector('#job-percent').textContent = '0%';
+      document.querySelector('#job-log').textContent = ''; renderFiles([]); showJob();
+      try {
+        const job = await api('/api/download',payload);
+        currentJob = job.id; sessionStorage.setItem('instagram-downloader-job',currentJob); pollJob();
+      } catch (error) { downloadButton.disabled = false; chooseButton.disabled = false; downloadSelected.disabled = selectedVideoKeys().length === 0; stopButton.hidden = true; toast(error.message); }
+    }
+    async function pollJob() {
+      if (!currentJob) return;
+      try {
+        const job = await api(`/api/jobs/${currentJob}`);
+        const done = ['complete','error','cancelled'].includes(job.status);
+        document.querySelector('#job-status').textContent = job.status.replaceAll('_',' ');
+        document.querySelector('#progress-fill').style.width = `${Math.round(job.progress || 0)}%`;
+        document.querySelector('#progress-track').setAttribute('aria-valuenow', String(Math.round(job.progress || 0)));
+        document.querySelector('#job-percent').textContent = `${Math.round(job.progress || 0)}%`;
+        document.querySelector('#job-current').textContent = job.current ? job.current.split(/[\\/]/).pop() : (done ? 'Finished' : 'Reading media…');
+        document.querySelector('#job-message').textContent = job.message;
+        document.querySelector('#job-log').textContent = (job.logs || []).join('\n');
+        document.querySelector('#job-log').scrollTop = document.querySelector('#job-log').scrollHeight;
+        renderFiles(job.files);
+        if (!done) pollTimer = setTimeout(pollJob, 900);
+        else {
+          downloadButton.disabled = false; chooseButton.disabled = false; downloadSelected.disabled = selectedVideoKeys().length === 0; stopButton.hidden = true; stopButton.disabled = false;
+          if (job.status === 'complete') toast('Download complete.');
+          if (job.status === 'error') toast(job.message);
+        }
+      } catch (error) {
+        if (error.message === 'Download job not found.') { sessionStorage.removeItem('instagram-downloader-job'); currentJob = null; }
+        else toast(error.message);
+      }
+    }
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      if (!urlInput.value.trim()) return;
+      const profile = isProfileLink(urlInput.value);
+      if (profile && currentPreviewIsProfile && currentPreview) {
+        const selected = currentPreview.videos.map(video => video.key);
+        await startDownload({preview_id:currentPreview.id,selected},'Downloading all scanned profile Reels');
+        return;
+      }
+      await startDownload(profile ? {url:urlInput.value,all_profile:true} : {url:urlInput.value}, profile ? 'Downloading profile videos/Reels' : 'Downloading post/Reel');
+    });
+    chooseButton.addEventListener('click',loadVideoChoices);
+    document.querySelector('#select-all').addEventListener('click',() => { videoList.querySelectorAll('input[type="checkbox"]').forEach(input => {input.checked=true;}); updateSelectionCount(); });
+    document.querySelector('#select-none').addEventListener('click',() => { videoList.querySelectorAll('input[type="checkbox"]').forEach(input => {input.checked=false;}); updateSelectionCount(); });
+    downloadSelected.addEventListener('click',() => {
+      if (!currentPreview) return;
+      const selected = selectedVideoKeys();
+      if (!selected.length) { toast('Select at least one video.'); return; }
+      startDownload({preview_id:currentPreview.id,selected},`Downloading ${selected.length} selected video${selected.length === 1 ? '' : 's'}`);
+    });
+    stopButton.addEventListener('click', async () => {
+      if (!currentJob) return;
+      stopButton.disabled = true; stopButton.textContent = 'Stopping…';
+      try { await api(`/api/jobs/${currentJob}/cancel`, {}); }
+      catch (error) { toast(error.message); }
+      finally { stopButton.textContent = 'Stop download'; }
+    });
+    function setConnection(connected) {
+      const badge = document.querySelector('#connection-badge');
+      badge.classList.toggle('connected', connected); badge.title = connected ? 'Local downloader is connected' : 'Local downloader is not reachable';
+    }
+    if (location.protocol === 'file:') {
+      document.querySelector('#file-notice').hidden = false;
+      downloadButton.disabled = true; chooseButton.disabled = true;
+      setConnection(false);
+    } else {
+      api('/api/status').then(() => setConnection(true)).catch(() => setConnection(false));
+      setInterval(checkChromeImport,1200);
+    }
+    if (currentJob) { showJob(); stopButton.hidden = false; pollJob(); }
+    updateDownloadLabel();
+  </script>
+</body>
+</html>

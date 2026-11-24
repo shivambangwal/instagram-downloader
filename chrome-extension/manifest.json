@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Instagram Downloader Local Helper",
+  "version": "1.0.0",
+  "description": "Send visible Instagram Reel links from the tab you choose to your local downloader.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwxCPZjqjdrKB3VGrj62t6VnLTKgCND3+8E1wV14X5u4cvMGKhR4ARdcxaH1a7TNR3nfK6k+LXHPfNPGflm4YT4GSMsABJfNYVDzIYz5BspujD7TVQeRkthfNuJecDvhzerGZfrEa0gm1OHUUsECUh7L1ojAjJrpONTWMqPLU9rUsBADegqxAhM3ljGNPJtQRaNdk25KJ3ihAIlOUUuxmyZcsbN76X7fQ7HfbpPq9HroLfvL4e/b7Md1BtHR9VkpUDJ6wAd4l+szxq8VBw7jD8ud56Gl4wuNymdCqoQjFQ+oqtUzA7RgYCQ82trIIyZeU8Igy/tWS8A3U7UbjTx1OVQIDAQAB",
+  "permissions": ["activeTab", "scripting"],
+  "host_permissions": ["http://127.0.0.1:8766/*"],
+  "action": {
+    "default_title": "Scan Instagram Reels",
+    "default_popup": "popup.html"
+  }
+}
