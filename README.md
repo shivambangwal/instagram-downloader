@@ -1,4 +1,3 @@
-/Users/shivambangwal/.zprofile:2: no such file or directory: /usr/local/bin/brew
 # Instagram Downloader
 
 A local app for saving Instagram Reels and video posts you own or have permission to save. It downloads the best available video and audio through yt-dlp, uses captions for filenames when available, shows progress, and can stop a running download.
